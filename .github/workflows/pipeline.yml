@@ -1,0 +1,40 @@
+name: Deployment pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:    
+    branches: [main]    
+    types: [opened, synchronize]
+
+jobs:
+  simple_deployment_pipeline:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - name: npm install 
+        run: npm install  
+      - name: lint        
+        run: npm run lint
+      - name: build        
+        run: npm run build
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' ,'), '#skip') }}
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: phonebook-ci
+          heroku_email: georgeashton95@gmail.com
+          healthcheck: "https://phonebook-ci.herokuapp.com/health"
+          checkstring: "ok"
+          rollbackonhealthcheckfailed: true
+       - name: Bump version and push tag
+         uses: anothrNick/github-tag-action@eca2b69f9e2c24be7decccd0f15fdb1ea5906598
+         if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' ,'), '#skip') }}
+         env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            WITH_V: true
+            DEFAULT_BUMP: patch
