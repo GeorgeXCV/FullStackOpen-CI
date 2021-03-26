@@ -32,13 +32,13 @@ jobs:
             healthcheck: "https://phonebook-ci.herokuapp.com/health"
             checkstring: "ok"
             rollbackonhealthcheckfailed: true
-       - name: Bump version and push tag
-         uses: anothrNick/github-tag-action@eca2b69f9e2c24be7decccd0f15fdb1ea5906598
-         if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' ,'), '#skip') }}
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           WITH_V: true
-           DEFAULT_BUMP: patch
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@eca2b69f9e2c24be7decccd0f15fdb1ea5906598
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' ,'), '#skip') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          DEFAULT_BUMP: patch
       - name: Slack Notification
         uses: 8398a7/action-slack@v3
         with:
