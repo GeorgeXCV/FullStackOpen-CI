@@ -111,6 +111,10 @@ app.get('/info', async (request, response, next) => {
   }
 })
 
+app.get('/health', (req, res) => {
+  res.send('ok')
+})
+
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
@@ -137,8 +141,4 @@ const generateId = () => {
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
-})
-
-app.get('/health', (req, res) => {
-  res.send('ok')
 })
